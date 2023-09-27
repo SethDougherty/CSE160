@@ -22,6 +22,9 @@ module Node{
    uses interface SimpleSend as Sender;
 
    uses interface CommandHandler;
+
+   uses interface Flooding;
+   uses interface NeighborDiscovery;
 }
 
 implementation{
@@ -43,6 +46,7 @@ implementation{
          //Retry until successful
          call AMControl.start();
       }
+      call NeighborDiscovery.startTimer();
    }
 
    event void AMControl.stopDone(error_t err){}
@@ -63,9 +67,13 @@ implementation{
       dbg(GENERAL_CHANNEL, "PING EVENT \n");
       makePack(&sendPackage, TOS_NODE_ID, destination, 0, 0, 0, payload, PACKET_MAX_PAYLOAD_SIZE);
       call Sender.send(sendPackage, destination);
+      call Flooding.start(destination, payload);
    }
 
-   event void CommandHandler.printNeighbors(){}
+   event void CommandHandler.printNeighbors(){
+      //call NeighborDiscovery.startTimer();
+	   call NeighborDiscovery.print();
+   }
 
    event void CommandHandler.printRouteTable(){}
 
