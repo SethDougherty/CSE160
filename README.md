@@ -1,6 +1,5 @@
 # Introduction
-This skeleton code is the basis for the CSE160 network project. Additional documentation
-on what is expected will be provided as the school year continues.
+This is my code for CSE 160 Computer Networking project at UC merced. This code is built off of provided skeleton code, and utilizes TinyOS. Below is the provided skeleton code and structures.
 
 # General Information
 ## Data Structures
