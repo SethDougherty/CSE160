@@ -12,6 +12,6 @@ implementation{
 	FloodingP.InternalSender -> SimpleSendC;
 	FloodingP.InternalReceiver -> AMReceiverC;
 	
-	components NeighborDiscoveryC;
-	FloodingP.NeighborDiscovery -> NeighborDiscoveryC;
+	// components NeighborDiscoveryC;
+	// FloodingP.NeighborDiscovery -> NeighborDiscoveryC;
 } 

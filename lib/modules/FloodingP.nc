@@ -10,7 +10,7 @@ module FloodingP{
     provides interface Flooding;
 	uses interface SimpleSend as InternalSender;
 	uses interface Receive as InternalReceiver;
-	uses interface NeighborDiscovery;
+	//uses interface NeighborDiscovery;
 }
 implementation{
 	pack ping_package;
@@ -68,6 +68,7 @@ implementation{
 		}
 		addToCache(msg->src, msg->seq, msg->dest);
 		if(msg->TTL == 0){		
+			dbg(FLOODING_CHANNEL, "TTL = 0. Dropping...\n");
 			return raw_msg;		
 		}
 
@@ -77,18 +78,18 @@ implementation{
 		        makePack(&ping_package, msg->dest, msg->src, CACHE_SIZE, PROTOCOL_PINGREPLY, ++monotonic_seq,(uint8_t *) msg->payload, PACKET_MAX_PAYLOAD_SIZE);
 				call InternalSender.send(ping_package, AM_BROADCAST_ADDR);
 				addToCache(msg->dest, monotonic_seq, msg->src);
-				dbg(FLOODING_CHANNEL, "Pingreply Sent!\n");
+				dbg(FLOODING_CHANNEL, "Pingreply Sent from %u\n", TOS_NODE_ID);
 			}
 			else{
 				dbg(FLOODING_CHANNEL, "reply received!\n");
-				dbg(FLOODING_CHANNEL, "Final response: %u \n", msg->src);
+				dbg(FLOODING_CHANNEL, "Final response from: %u \n", msg->src);
 			}
 		}
 
 		else{ 
 			msg->TTL--;
 			call InternalSender.send(*msg, AM_BROADCAST_ADDR);
-			dbg(FLOODING_CHANNEL, "Packet forwarded with new TTL and logged\n");
+			dbg(FLOODING_CHANNEL, "Packet forwarded from %u with new TTL and logged\n", TOS_NODE_ID);
 		} 
 		return raw_msg;
 	}

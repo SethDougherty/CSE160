@@ -18,4 +18,7 @@ implementation{
 	NeighborDiscoveryP.NeighborReceive -> AMReceiverC;
 	NeighborDiscoveryP.delayTimer -> delayTimer;
 
+	components LSRoutingC;
+    NeighborDiscoveryP.LSRouting -> LSRoutingC;
+
 } 

@@ -36,4 +36,7 @@ implementation {
 
     components FloodingC;
     Node.Flooding -> FloodingC;
+
+    components LSRoutingC;
+    Node.LSRouting -> LSRoutingC;
 }

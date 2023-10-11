@@ -1,5 +1,5 @@
-#ifndef LISTS_H
-#define LISTS_H
+#ifndef NEIGHBORS_H
+#define NEIGHBORS_H
 
 typedef struct neighborList{
 	uint16_t node_id;

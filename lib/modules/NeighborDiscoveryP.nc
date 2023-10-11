@@ -2,7 +2,7 @@
 #include "../../includes/protocol.h"
 #include "../../includes/packet.h"
 #include "../../includes/neighbors.h"
-#define DELAY_PERIOD 30000 //5000 ms or 5 seconds
+#define DELAY_PERIOD 5000 //5000 ms or 5 seconds
 #define LIST_SIZE 255
 
 module NeighborDiscoveryP{
@@ -10,6 +10,7 @@ module NeighborDiscoveryP{
 	uses interface Timer<TMilli> as delayTimer;
 	uses interface SimpleSend as NeighborSender;
 	uses interface Receive as NeighborReceive;
+	uses interface LSRouting as LSRouting;
 	
 	provides interface NeighborDiscovery;
 }
@@ -32,16 +33,25 @@ implementation{
 		}
 	}
 
-	// command neighborList* NeighborDiscovery.getNeighborList(){
-	// 	return Neighbors;
-	// }
+	command neighborList* NeighborDiscovery.getNeighborList(){
+		uint32_t i = 0;
+		uint32_t neighborArray[neighbor_element];
+			for (i = 0; i < neighbor_element; i++){
+				neighborArray[i] = Neighbors[i].node_id;
+			}
+		return neighborArray;
+	}
+
+	command uint16_t NeighborDiscovery.getNeighborListSize(){
+		return neighbor_element;
+	}
 
 	void checkNeighbors(uint16_t src){
 		uint32_t i = 0;
 		for (i = 0; i < LIST_SIZE; i++){
 			//check if the neighbor is already known
 			if(Neighbors[i].node_id == src){
-				//if known, refresh active neighbor threshold and increment received and sent, since it will send after that
+				//if known, refresh active neighbor threshold and increment received, since it will send after that
 				Neighbors[i].active_neighbor = 1;
 				Neighbors[i].messages_received++;
 				return;
@@ -52,6 +62,7 @@ implementation{
 		Neighbors[neighbor_element].active_neighbor = 1;
 		Neighbors[neighbor_element].messages_received++;
 		neighbor_element++;
+		call LSRouting.neighborchange(0);
 
 	}
 
@@ -62,6 +73,7 @@ implementation{
 
 		for(i = 0; i < LIST_SIZE; i++){
 			if(Neighbors[i].active_neighbor == 6){
+				call LSRouting.neighborchange(Neighbors[i].node_id);
 				for(j = i; j < LIST_SIZE - 1; j++){
 					//dbg(NEIGHBOR_CHANNEL, "active_neighbor is: %u \n", Neighbors[i].active_neighbor);
 					Neighbors[j].node_id = Neighbors[j + 1].node_id;
